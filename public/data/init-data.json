@@ -1,0 +1,62 @@
+{
+  "users": [
+    {
+      "name": "Test Student",
+      "email": "student@example.com",
+      "role": "student",
+      "enrolledCourses": [],
+      "createdAt": "2023-04-01T00:00:00.000Z"
+    },
+    {
+      "name": "Admin User",
+      "email": "admin@example.com",
+      "role": "admin",
+      "enrolledCourses": [],
+      "createdAt": "2023-04-01T00:00:00.000Z"
+    }
+  ],
+  "courses": [
+    {
+      "title": "Introduction to Web Development",
+      "description": "A comprehensive introduction to modern web development, covering HTML, CSS, and JavaScript fundamentals.",
+      "instructor": "Jane Smith",
+      "duration": "8 weeks",
+      "level": "Beginner",
+      "image": "/images/courses/web-dev.jpg",
+      "enrolledCount": 120,
+      "isPublic": true,
+      "sections": [
+        {
+          "title": "Getting Started with HTML",
+          "content": "<p>Learn the basics of HTML structure and semantics.</p><ul><li>Document structure</li><li>HTML elements</li><li>Semantic markup</li></ul>"
+        },
+        {
+          "title": "CSS Fundamentals",
+          "content": "<p>Style your HTML with CSS.</p><ul><li>Selectors</li><li>Box model</li><li>Layout techniques</li></ul>"
+        }
+      ],
+      "createdAt": "2023-03-15T00:00:00.000Z"
+    },
+    {
+      "title": "Advanced JavaScript",
+      "description": "Take your JavaScript skills to the next level with advanced concepts and modern practices.",
+      "instructor": "John Doe",
+      "duration": "10 weeks",
+      "level": "Intermediate",
+      "image": "/images/courses/js-advanced.jpg",
+      "enrolledCount": 85,
+      "isPublic": true,
+      "sections": [
+        {
+          "title": "ES6+ Features",
+          "content": "<p>Modern JavaScript features that every developer should know.</p><ul><li>Arrow functions</li><li>Destructuring</li><li>Spread and rest operators</li></ul>"
+        },
+        {
+          "title": "Asynchronous JavaScript",
+          "content": "<p>Working with asynchronous code.</p><ul><li>Promises</li><li>Async/await</li><li>Error handling</li></ul>"
+        }
+      ],
+      "createdAt": "2023-02-20T00:00:00.000Z"
+    }
+  ]
+}

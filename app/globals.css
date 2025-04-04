@@ -1,0 +1,351 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 79 70 229; /* indigo-500 */
+    --primary-light: 165 180 252; /* indigo-300 */
+    --primary-dark: 55 48 163; /* indigo-800 */
+    --accent: 139 92 246; /* violet-500 */
+    --accent-light: 196 181 253; /* violet-300 */
+    --accent-dark: 91 33 182; /* violet-900 */
+  }
+
+  /* Theme color variables based on accent color */
+  :root[data-accent="indigo"] {
+    --primary: 79 70 229; /* indigo-500 */
+    --primary-light: 165 180 252; /* indigo-300 */
+    --primary-dark: 55 48 163; /* indigo-800 */
+  }
+
+  :root[data-accent="purple"] {
+    --primary: 147 51 234; /* purple-600 */
+    --primary-light: 216 180 254; /* purple-300 */
+    --primary-dark: 107 33 168; /* purple-800 */
+  }
+
+  :root[data-accent="green"] {
+    --primary: 16 185 129; /* green-500 */
+    --primary-light: 110 231 183; /* green-300 */
+    --primary-dark: 6 95 70; /* green-800 */
+  }
+
+  :root[data-accent="blue"] {
+    --primary: 59 130 246; /* blue-500 */
+    --primary-light: 147 197 253; /* blue-300 */
+    --primary-dark: 30 64 175; /* blue-800 */
+  }
+
+  :root[data-accent="pink"] {
+    --primary: 236 72 153; /* pink-500 */
+    --primary-light: 249 168 212; /* pink-300 */
+    --primary-dark: 157 23 77; /* pink-800 */
+  }
+
+  :root[data-accent="amber"] {
+    --primary: 245 158 11; /* amber-500 */
+    --primary-light: 252 211 77; /* amber-300 */
+    --primary-dark: 146 64 14; /* amber-800 */
+  }
+
+  /* Base styles */
+  body {
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  /* Indigo Theme (Default) */
+  --color-primary-50: 238 242 255;  /* indigo-50 */
+  --color-primary-100: 224 231 255; /* indigo-100 */
+  --color-primary-200: 199 210 254; /* indigo-200 */
+  --color-primary-300: 165 180 252; /* indigo-300 */
+  --color-primary-400: 129 140 248; /* indigo-400 */
+  --color-primary-500: 99 102 241;  /* indigo-500 */
+  --color-primary-600: 79 70 229;   /* indigo-600 */
+  --color-primary-700: 67 56 202;   /* indigo-700 */
+  --color-primary-800: 55 48 163;   /* indigo-800 */
+  --color-primary-900: 49 46 129;   /* indigo-900 */
+  --color-primary-950: 30 27 75;    /* indigo-950 */
+
+  [data-accent-color="teal"] {
+    --color-primary-50: 240 253 250;  /* teal-50 */
+    --color-primary-100: 204 251 241; /* teal-100 */
+    --color-primary-200: 153 246 228; /* teal-200 */
+    --color-primary-300: 94 234 212;  /* teal-300 */
+    --color-primary-400: 45 212 191;  /* teal-400 */
+    --color-primary-500: 20 184 166;  /* teal-500 */
+    --color-primary-600: 13 148 136;  /* teal-600 */
+    --color-primary-700: 15 118 110;  /* teal-700 */
+    --color-primary-800: 17 94 89;    /* teal-800 */
+    --color-primary-900: 19 78 74;    /* teal-900 */
+    --color-primary-950: 4 47 46;     /* teal-950 */
+  }
+
+  [data-accent-color="purple"] {
+    --color-primary-50: 250 245 255;  /* purple-50 */
+    --color-primary-100: 243 232 255; /* purple-100 */
+    --color-primary-200: 233 213 255; /* purple-200 */
+    --color-primary-300: 216 180 254; /* purple-300 */
+    --color-primary-400: 192 132 252; /* purple-400 */
+    --color-primary-500: 168 85 247;  /* purple-500 */
+    --color-primary-600: 147 51 234;  /* purple-600 */
+    --color-primary-700: 126 34 206;  /* purple-700 */
+    --color-primary-800: 107 33 168;  /* purple-800 */
+    --color-primary-900: 88 28 135;   /* purple-900 */
+    --color-primary-950: 59 7 100;    /* purple-950 */
+  }
+
+  [data-accent-color="amber"] {
+    --color-primary-50: 255 251 235;  /* amber-50 */
+    --color-primary-100: 254 243 199; /* amber-100 */
+    --color-primary-200: 253 230 138; /* amber-200 */
+    --color-primary-300: 252 211 77;  /* amber-300 */
+    --color-primary-400: 251 191 36;  /* amber-400 */
+    --color-primary-500: 245 158 11;  /* amber-500 */
+    --color-primary-600: 217 119 6;   /* amber-600 */
+    --color-primary-700: 180 83 9;    /* amber-700 */
+    --color-primary-800: 146 64 14;   /* amber-800 */
+    --color-primary-900: 120 53 15;   /* amber-900 */
+    --color-primary-950: 69 26 3;     /* amber-950 */
+  }
+
+  [data-accent-color="rose"] {
+    --color-primary-50: 255 241 242;  /* rose-50 */
+    --color-primary-100: 255 228 230; /* rose-100 */
+    --color-primary-200: 254 205 211; /* rose-200 */
+    --color-primary-300: 253 164 175; /* rose-300 */
+    --color-primary-400: 251 113 133; /* rose-400 */
+    --color-primary-500: 244 63 94;   /* rose-500 */
+    --color-primary-600: 225 29 72;   /* rose-600 */
+    --color-primary-700: 190 18 60;   /* rose-700 */
+    --color-primary-800: 159 18 57;   /* rose-800 */
+    --color-primary-900: 136 19 55;   /* rose-900 */
+    --color-primary-950: 76 5 25;     /* rose-950 */
+  }
+}
+
+@layer components {
+  .neumorphic {
+    @apply bg-white dark:bg-gray-800 shadow-lg rounded-xl;
+  }
+  
+  .neumorphic-inset {
+    @apply bg-gray-100 dark:bg-gray-700 shadow-inner rounded-xl;
+  }
+  
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-white dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-gray-500;
+  }
+  
+  .btn-accent {
+    @apply btn bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-100 hover:bg-primary-200 dark:hover:bg-primary-800 focus:ring-primary-500;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden;
+  }
+  
+  .input {
+    @apply block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:text-white transition-colors duration-200;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply badge bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-100;
+  }
+  
+  .badge-success {
+    @apply badge bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100;
+  }
+  
+  .badge-warning {
+    @apply badge bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100;
+  }
+  
+  .badge-danger {
+    @apply badge bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100;
+  }
+  
+  .badge-info {
+    @apply badge bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100;
+  }
+}
+
+/* Utility classes */
+.animate-once {
+  animation-iteration-count: 1;
+}
+
+/* Parallax effect */
+.parallax {
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+}
+
+.parallax-layer {
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Transition smoothing */
+.page-transition {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slideIn {
+    animation: slideIn 0.5s ease-out;
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-bounce {
+    animation: bounce 1s infinite;
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  .animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Keyframes */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(-5%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes ping {
+    75%, 100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+}
+
+/* Enhanced depth effects */
+.card-hover {
+  @apply transform transition duration-300 hover:-translate-y-1 hover:shadow-lg;
+}
+
+.gradient-accent-primary {
+  @apply bg-gradient-to-r from-primary-500 to-accent-500;
+}
+
+.gradient-accent-secondary {
+  @apply bg-gradient-to-br from-primary-400 to-accent-600;
+}
+
+/* Subtle border accents */
+.border-accent {
+  @apply border-l-4 border-accent-500 pl-4;
+}
+
+/* Interactive elements */
+.btn-gradient {
+  @apply px-6 py-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-lg
+         transform transition duration-300 hover:scale-105 hover:shadow-md;
+}
+
+/* Enhanced cards */
+.card-minimal {
+  @apply bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700
+         transition-all duration-300 hover:shadow-md;
+}
+
+/* Subtle hover effects */
+.hover-lift {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+}
+
+/* Glass effect elements */
+.glass-panel {
+  @apply bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/20 dark:border-gray-700/20
+         shadow-lg rounded-xl;
+} 
