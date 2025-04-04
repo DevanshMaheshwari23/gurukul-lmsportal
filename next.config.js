@@ -7,9 +7,18 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Configure for subdirectory deployment
+  // Use basePath in all environments for consistency
   basePath: '/gurukul',
   assetPrefix: '/gurukul',
+  // Customize API routes to make sure they work with the basePath
+  async rewrites() {
+    return [
+      {
+        source: '/gurukul/api/:path*',
+        destination: '/api/:path*',
+      }
+    ];
+  },
   // Turn off image optimization
   images: {
     unoptimized: true,

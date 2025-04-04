@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import axios from '@/lib/axios';
 import { FiMail, FiLock, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 import { setCookie } from 'cookies-next';
+import { navigateTo } from '@/lib/utils/navigation';
 
 export default function Login() {
   const router = useRouter();
@@ -66,16 +67,13 @@ export default function Login() {
       setPassword('');
       
       // Redirect based on user role
-      setTimeout(() => {
-        const userRole = response.data.user.role;
-        if (userRole === 'admin') {
-          router.push('/admin/dashboard');
-        } else if (userRole === 'student') {
-          router.push('/student/dashboard');
-        } else {
-          router.push('/dashboard');
-        }
-      }, 1000);
+      const userRole = response.data.user.role;
+      
+      if (userRole === 'admin') {
+        navigateTo('/admin/dashboard', router);
+      } else {
+        navigateTo('/student/dashboard', router);
+      }
       
     } catch (error: any) {
       // Remove all console logs for production

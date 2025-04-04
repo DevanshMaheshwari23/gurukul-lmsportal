@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import axios from '@/lib/axios';
 import { FiUser, FiMail, FiLock, FiBook, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 import { setCookie } from 'cookies-next';
+import { navigateTo } from '@/lib/utils/navigation';
 
 interface Course {
   _id: string;
@@ -29,18 +30,11 @@ export default function Register() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('/api/courses?publicOnly=true');
-        // Make sure we're setting an array to courses
-        if (response.data && Array.isArray(response.data.courses)) {
-          setCourses(response.data.courses);
-        } else {
-          console.error('Invalid course data format:', response.data);
-          setCourses([]); // Set empty array as fallback
-        }
+        // Using custom axios instance that handles basePath
+        const response = await axios.get('/api/courses/public');
+        setCourses(response.data.data);
       } catch (error) {
-        console.error('Error fetching courses:', error);
         setError('Failed to load available courses. Please try again later.');
-        setCourses([]); // Set empty array on error
       }
     };
 
@@ -98,6 +92,7 @@ export default function Register() {
     setLoading(true);
 
     try {
+      // Using custom axios instance that handles basePath
       const response = await axios.post('/api/auth/register', {
         name,
         email,
@@ -128,9 +123,9 @@ export default function Register() {
       setTimeout(() => {
         const userRole = response.data.user.role;
         if (userRole === 'admin') {
-          router.push('/admin/dashboard');
+          navigateTo('/admin/dashboard', router);
         } else {
-          router.push('/student/dashboard');
+          navigateTo('/student/dashboard', router);
         }
       }, 1500);
     } catch (error: any) {

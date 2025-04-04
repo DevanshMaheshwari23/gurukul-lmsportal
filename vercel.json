@@ -1,4 +1,17 @@
 {
   "version": 2,
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "routes": [
+    {
+      "src": "/gurukul/(.*)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/gurukul/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 } 

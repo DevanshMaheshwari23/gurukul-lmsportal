@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import Link from 'next/link';
+import axios from '@/lib/axios';
+import { getAppPath, navigateTo } from '@/lib/utils/navigation';
+import Link from '@/components/Link';
 import { FiBook, FiCalendar, FiClock, FiUser, FiAward } from 'react-icons/fi';
 import Navbar from '../components/Navbar';
 
@@ -42,24 +43,22 @@ export default function Dashboard() {
         const token = localStorage.getItem('token');
         
         if (!token) {
-          router.push('/login');
+          navigateTo('/login', router);
           return;
         }
         
-        // Get user info
-        const response = await axios.get('/api/auth/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        // Get user info - using custom axios instance that handles basePath
+        const response = await axios.get('/api/auth/me');
         
         const userRole = response.data.user.role;
         
-        // Redirect based on role
+        // Redirect based on role using navigation utility
         if (userRole === 'admin') {
-          router.push('/admin/dashboard');
+          navigateTo('/admin/dashboard', router);
         } else if (userRole === 'student') {
-          router.push('/student/dashboard');
+          navigateTo('/student/dashboard', router);
         } else if (userRole === 'instructor') {
-          router.push('/instructor/dashboard');
+          navigateTo('/instructor/dashboard', router);
         }
         // For any other role, stay on the generic dashboard
         
@@ -68,7 +67,7 @@ export default function Dashboard() {
         
         // If authentication fails, redirect to login
         localStorage.removeItem('token');
-        router.push('/login');
+        navigateTo('/login', router);
       }
     };
     
@@ -80,13 +79,12 @@ export default function Dashboard() {
       const token = localStorage.getItem('token');
       
       if (!token) {
-        router.push('/login');
+        navigateTo('/login', router);
         return;
       }
 
-      const response = await axios.get(`/api/courses/${courseId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      // Using custom axios instance that handles basePath
+      const response = await axios.get(`/api/courses/${courseId}`);
       
       setSelectedCourse(response.data.course);
     } catch (error) {
@@ -106,13 +104,13 @@ export default function Dashboard() {
   }
 
   if (!user) {
-    router.push('/login');
+    navigateTo('/login', router);
     return null;
   }
 
   // Redirect admin to admin dashboard
   if (user.role === 'admin') {
-    router.push('/admin/dashboard');
+    navigateTo('/admin/dashboard', router);
     return null;
   }
 
