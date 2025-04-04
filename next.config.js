@@ -15,6 +15,8 @@ const nextConfig = {
     domains: ['localhost', 'vercel.app'],
     unoptimized: false,
   },
+  // Add proper transpilation for certain Node.js packages
+  transpilePackages: ['bcrypt', 'bcryptjs']
 };
 
 module.exports = nextConfig; 

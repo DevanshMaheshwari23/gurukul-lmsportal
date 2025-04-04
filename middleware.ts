@@ -57,12 +57,11 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+// Add debugging information
 export const config = {
   // Specify which paths this middleware will run on
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+    '/((?!_next/static|_next/image|_next/data|favicon.ico|public|.*\\.(.*)$).*)',
     '/api/:path*',
-    '/(admin)/:path*',
-    '/(student)/:path*',
   ],
 }; 

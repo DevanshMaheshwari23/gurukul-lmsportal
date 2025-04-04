@@ -2,5 +2,10 @@
   "version": 2,
   "buildCommand": "npm install && npm run build",
   "outputDirectory": ".next",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "env": {
+    "MONGODB_URI": "mongodb+srv://knseducationhelp:IXA59hTxOXWWwDyS@lmslogin.kuaf13o.mongodb.net/LmsLogin?retryWrites=true&w=majority",
+    "JWT_SECRET": "3t55576j1199",
+    "NODE_ENV": "production"
+  }
 } 
