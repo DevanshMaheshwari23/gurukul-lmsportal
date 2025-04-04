@@ -15,34 +15,34 @@ export function middleware(request: NextRequest) {
   };
   
   // Protect admin routes
-  if (path.startsWith('/gurukul/admin') || path.startsWith('/gurukul/(admin)')) {
+  if (path.startsWith('/admin') || path.startsWith('/(admin)')) {
     // Check if user is authenticated and is an admin
     if (!token) {
-      return NextResponse.redirect(createUrl('/gurukul/login'));
+      return NextResponse.redirect(createUrl('/login'));
     }
     
     // For API routes, allow the request to be handled by the route handler
     // which will validate the token role in more detail
-    if (path.startsWith('/gurukul/api/')) {
+    if (path.startsWith('/api/')) {
       return NextResponse.next();
     }
   }
   
   // Protect student routes
-  if (path.startsWith('/gurukul/student') || path.startsWith('/gurukul/(student)')) {
+  if (path.startsWith('/student') || path.startsWith('/(student)')) {
     // Redirect to login if not authenticated
     if (!token) {
-      return NextResponse.redirect(createUrl('/gurukul/login'));
+      return NextResponse.redirect(createUrl('/login'));
     }
   }
   
   // Protect API routes
-  if (path.startsWith('/gurukul/api/')) {
+  if (path.startsWith('/api/')) {
     // Some API routes don't require authentication (e.g., login, register)
     const publicRoutes = [
-      '/gurukul/api/auth/login', 
-      '/gurukul/api/auth/register', 
-      '/gurukul/api/courses/public'
+      '/api/auth/login', 
+      '/api/auth/register', 
+      '/api/courses/public'
     ];
     
     // If the route is not public and there's no token, return 401
@@ -60,9 +60,9 @@ export function middleware(request: NextRequest) {
 export const config = {
   // Specify which paths this middleware will run on
   matcher: [
-    '/gurukul/((?!_next/static|_next/image|favicon.ico|public).*)',
-    '/gurukul/api/:path*',
-    '/gurukul/(admin)/:path*',
-    '/gurukul/(student)/:path*',
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+    '/api/:path*',
+    '/(admin)/:path*',
+    '/(student)/:path*',
   ],
 }; 
