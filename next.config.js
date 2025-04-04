@@ -7,21 +7,25 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Use basePath in all environments for consistency
-  basePath: '/gurukul',
-  assetPrefix: '/gurukul',
+  // Use basePath in production only
+  basePath: process.env.NODE_ENV === 'production' ? '/gurukul' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/gurukul' : '',
   // Customize API routes to make sure they work with the basePath
   async rewrites() {
-    return [
-      {
-        source: '/gurukul/api/:path*',
-        destination: '/api/:path*',
-      }
-    ];
+    if (process.env.NODE_ENV === 'production') {
+      return [
+        {
+          source: '/gurukul/api/:path*',
+          destination: '/api/:path*',
+        }
+      ];
+    }
+    return [];
   },
-  // Turn off image optimization
+  // Configure image optimization
   images: {
-    unoptimized: true,
+    domains: ['localhost', 'vercel.app'],
+    unoptimized: process.env.NODE_ENV === 'production',
   },
 };
 

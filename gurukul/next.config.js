@@ -7,12 +7,30 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Use basePath for page routes but not for API routes
+  // Use basePath for client routes
   basePath: '/gurukul',
   assetPrefix: '/gurukul',
+  // Allow API timeout to be longer
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+    apiTimeout: 60000, // 60 seconds
+  },
   // Turn off image optimization
   images: {
     unoptimized: true,
+  },
+  // Customize API routes
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: '/api/:path*',
+      },
+      {
+        source: '/gurukul/api/:path*',
+        destination: '/api/:path*',
+      },
+    ];
   },
 };
 

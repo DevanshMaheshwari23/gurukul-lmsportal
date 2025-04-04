@@ -111,6 +111,11 @@ export default function Register() {
         courseId: selectedCourse || undefined,
       });
 
+      // Check if response has the expected data
+      if (!response.data || !response.data.token || !response.data.user) {
+        throw new Error('Invalid response from server');
+      }
+
       // Save token to local storage for automatic login
       localStorage.setItem('token', response.data.token);
       
@@ -140,10 +145,17 @@ export default function Register() {
         }
       }, 1500);
     } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
-        setError(error.response.data.error);
+      // Handle standardized error format from axios interceptor
+      if (error && typeof error === 'object') {
+        if (error.message) {
+          setError(error.message);
+        } else if (error.original?.response?.data?.error) {
+          setError(error.original.response.data.error);
+        } else {
+          setError('Registration failed. Please try again later.');
+        }
       } else {
-        setError('Registration failed. Please try again later.');
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setLoading(false);

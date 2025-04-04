@@ -46,6 +46,11 @@ export default function Login() {
         password,
       });
       
+      // Validate response data
+      if (!response.data || !response.data.token || !response.data.user) {
+        throw new Error('Invalid response from server');
+      }
+      
       // Save token to local storage
       localStorage.setItem('token', response.data.token);
       
@@ -66,32 +71,29 @@ export default function Login() {
       // Redirect based on user role
       const userRole = response.data.user.role;
       
-      if (userRole === 'admin') {
-        navigateTo('/admin/dashboard', router);
-      } else {
-        navigateTo('/student/dashboard', router);
-      }
+      // Use setTimeout to allow the success message to be displayed
+      setTimeout(() => {
+        if (userRole === 'admin') {
+          navigateTo('/admin/dashboard', router);
+        } else {
+          navigateTo('/student/dashboard', router);
+        }
+      }, 1000);
       
     } catch (error: any) {
-      // Handle different error cases
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        if (error.response.status === 401) {
+      // Handle standardized error format from axios interceptor
+      if (error && typeof error === 'object') {
+        if (error.status === 401) {
           setError('Invalid email or password. Please try again.');
-        } else if (error.response.status === 504) {
+        } else if (error.status === 504) {
           setError('The server took too long to respond. Please try again.');
-        } else if (error.response.data && error.response.data.error) {
-          setError(error.response.data.error);
+        } else if (error.message) {
+          setError(error.message);
         } else {
           setError('Authentication failed. Please try again.');
         }
-      } else if (error.request) {
-        // The request was made but no response was received
-        setError('No response from server. Please check your internet connection.');
       } else {
-        // Something happened in setting up the request that triggered an Error
-        setError('Login failed. Please try again later.');
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setLoading(false);

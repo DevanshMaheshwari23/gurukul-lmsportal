@@ -1,18 +1,27 @@
 {
   "version": 2,
   "framework": "nextjs",
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
   "routes": [
-    { 
-      "src": "/api/(.*)",
-      "dest": "/api/$1" 
+    {
+      "src": "/api/(.+)",
+      "dest": "/api/$1"
     },
-    { 
-      "src": "/gurukul/api/(.*)",
-      "dest": "/api/$1" 
+    {
+      "src": "/gurukul/api/(.+)",
+      "dest": "/api/$1"
     },
-    { 
-      "src": "/(.*)", 
-      "dest": "/gurukul/$1" 
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/gurukul/$1"
     }
   ]
 } 
