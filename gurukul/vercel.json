@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "routes": [
+    { 
+      "src": "/api/(.*)",
+      "dest": "/api/$1" 
+    },
+    { 
+      "src": "/gurukul/api/(.*)",
+      "dest": "/api/$1" 
+    },
+    { 
+      "src": "/(.*)", 
+      "dest": "/gurukul/$1" 
+    }
+  ]
+} 
