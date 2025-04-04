@@ -136,8 +136,6 @@ export default function StudentProfilePage() {
         // Combine them, with permanent progress taking precedence
         const combinedProgress = { ...courseProgress, ...permanentProgress };
         
-        console.log('Combined progress data:', combinedProgress);
-        
         // Go through each course in the progress data
         for (const courseId in combinedProgress) {
           const course = enrolledCourses.find((c: any) => c._id === courseId);
@@ -150,8 +148,6 @@ export default function StudentProfilePage() {
           const completedLectureIds = Object.entries(lectureStates)
             .filter(([_, completed]) => completed)
             .map(([id]) => id);
-          
-          console.log(`Course ${course.title} has ${completedLectureIds.length} completed lectures`);
           
           // For each completed lecture ID, find the actual lecture info
           for (const lectureId of completedLectureIds) {
@@ -183,8 +179,6 @@ export default function StudentProfilePage() {
         // Sort by most recent first (we'll simulate with random dates for now)
         // In production, we would store and use actual completion timestamps
         recentLectures.sort(() => Math.random() - 0.5);
-        
-        console.log(`Found ${recentLectures.length} completed lectures total`);
         
         // Take only the 5 most recent
         setRecentlyAttendedLectures(recentLectures.slice(0, 5));

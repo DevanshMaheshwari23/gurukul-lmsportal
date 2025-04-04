@@ -84,7 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
       // Sort by timestamp, most recent first
       return completedLectures.sort((a, b) => b.timestamp - a.timestamp).slice(0, 3);
     } catch (error) {
-      console.error('Error getting recently completed lectures:', error);
+      // Remove console error for production
       return [];
     }
   };

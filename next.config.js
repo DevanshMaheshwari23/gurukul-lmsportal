@@ -7,11 +7,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Ensure middleware works correctly
-  experimental: {
-    serverComponentsExternalPackages: [],
-  },
-  // Turn off image optimization on Netlify
+  // Configure for subdirectory deployment
+  basePath: '/gurukul',
+  assetPrefix: '/gurukul',
+  // Turn off image optimization
   images: {
     unoptimized: true,
   },

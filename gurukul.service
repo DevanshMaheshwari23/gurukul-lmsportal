@@ -1,0 +1,15 @@
+[Unit]
+Description=Gurukul LMS Next.js Application
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/knseducation.com/gurukul
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+[Install]
+WantedBy=multi-user.target 

@@ -78,12 +78,9 @@ export default function Login() {
       }, 1000);
       
     } catch (error: any) {
-      console.error('Login error:', error);
+      // Remove all console logs for production
       
       if (error.response) {
-        console.log('Error response status:', error.response.status);
-        console.log('Error response data:', error.response.data);
-        
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
         if (error.response.status === 401) {

@@ -1140,10 +1140,8 @@ export default function StudentDashboard() {
       const syncTime = Date.now();
       localStorage.setItem('lastLectureSyncTime', syncTime.toString());
       sessionStorage.setItem('lastLectureSyncTime', syncTime.toString());
-      
-      console.log('Lecture completion data loaded and synced between storages');
     } catch (error) {
-      console.error('Error loading lecture completion data:', error);
+      // Error handling without logging
     }
   }, []);
 
