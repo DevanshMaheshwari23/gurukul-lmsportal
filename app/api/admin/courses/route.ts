@@ -32,47 +32,89 @@ async function verifyAdminToken(authHeader: string | null) {
 // GET all courses (admin only)
 export async function GET(request: Request) {
   try {
+    console.log('Admin courses API called');
+    
     // Verify admin authorization
     const authHeader = request.headers.get('Authorization');
-    const verificationResult = await verifyAdminToken(authHeader);
     
-    if ('error' in verificationResult) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('No authorization header found');
       return NextResponse.json(
-        { error: verificationResult.error },
-        { status: verificationResult.status }
+        { error: 'Unauthorized: No token provided' },
+        { status: 401 }
+      );
+    }
+    
+    const token = authHeader.split(' ')[1];
+    
+    // Verify token
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET || 'default_jwt_secret') as {
+        userId: string;
+        email: string;
+        role: string;
+      };
+      console.log('Token verified for user:', decodedToken.email);
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      return NextResponse.json(
+        { error: 'Unauthorized: Invalid token' },
+        { status: 401 }
+      );
+    }
+    
+    // Only admins can access this endpoint
+    if (decodedToken.role !== 'admin') {
+      console.log('User is not an admin:', decodedToken.email);
+      return NextResponse.json(
+        { error: 'Forbidden: Only admins can access this endpoint' },
+        { status: 403 }
       );
     }
     
     // Connect to database
-    await connectToDatabase();
+    try {
+      await connectToDatabase();
+      console.log('Successfully connected to database');
+    } catch (error) {
+      console.error('Database connection error:', error);
+      return NextResponse.json(
+        { error: 'Unable to connect to database' },
+        { status: 503 }
+      );
+    }
     
-    // Get all courses with createdBy populated, but handle cases where user might not exist
-    const courses = await Course.find()
-      .sort({ createdAt: -1 })
-      .populate({
-        path: 'createdBy',
-        select: 'name email',
-        model: 'User',
-        options: { lean: true }
-      });
-    
-    // Transform the courses to ensure createdBy is always an object
-    const transformedCourses = courses.map(course => ({
-      ...course.toObject(),
-      createdBy: course.createdBy || { name: 'Unknown', email: 'unknown@example.com' }
-    }));
-    
-    return NextResponse.json({ courses: transformedCourses });
+    try {
+      console.log('Fetching all courses for admin...');
+      const courses = await Course.find({})
+        .select('_id title description instructor duration level image enrolledCount isPublic createdAt')
+        .sort({ createdAt: -1 });
+      
+      console.log(`Found ${courses.length} courses`);
+      return NextResponse.json({ courses });
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      console.error('Error details:', JSON.stringify({
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        code: error.code
+      }));
+      return NextResponse.json(
+        { error: 'Failed to fetch courses' },
+        { status: 500 }
+      );
+    }
   } catch (error: any) {
-    console.error('Admin courses error:', error);
-    console.error('Error details:', {
+    console.error('Get admin courses error:', {
       message: error.message,
       stack: error.stack,
       name: error.name,
       code: error.code
     });
     return NextResponse.json(
-      { error: 'Failed to fetch courses' },
+      { error: 'An unexpected error occurred while fetching courses' },
       { status: 500 }
     );
   }
