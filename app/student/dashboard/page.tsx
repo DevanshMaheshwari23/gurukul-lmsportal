@@ -130,50 +130,15 @@ export default function StudentDashboard() {
           });
           
           setEnrolledCourses(coursesResponse.data.courses || []);
+          
+          // If there are enrolled courses, select the first one by default
+          if (coursesResponse.data.courses && coursesResponse.data.courses.length > 0) {
+            setSelectedCourse(coursesResponse.data.courses[0]);
+            calculateProgress(coursesResponse.data.courses[0]);
+          }
         } catch (error) {
           console.error('Error fetching enrolled courses:', error);
-          
-          // Use mock data if API fails
-          setEnrolledCourses([
-            {
-              _id: '1',
-              title: 'Introduction to React',
-              description: 'Learn the fundamentals of React.js and build modern web applications',
-              thumbnailUrl: 'https://placehold.co/600x400/3b82f6/ffffff?text=React+Course',
-              sections: [
-                {
-                  _id: 's1',
-                  title: 'Getting Started with React',
-                  chapters: [
-                    {
-                      _id: 'c1',
-                      title: 'React Fundamentals',
-                      lectures: [
-                        
-                      ]
-                    }
-                  ]
-                },
-                {
-                  _id: 's2',
-                  title: 'React Hooks',
-                  chapters: [
-                    {
-                      _id: 'c2',
-                      title: 'Introduction to Hooks',
-                      lectures: [
-                        
-                      ]
-                    }
-                  ]
-                }
-              ],
-              progress: 25,
-              totalLectures: 12,
-              completedLectures: 8,
-              lastAccessed: '2 days ago'
-            }
-          ]);
+          setError('Failed to load your courses. Please try again later.');
         }
         
         // Fetch notifications

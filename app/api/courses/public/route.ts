@@ -7,16 +7,8 @@ export async function GET() {
     console.log('Public courses API called');
     
     // Connect to database
-    try {
-      await connectToDatabase();
-      console.log('Successfully connected to database');
-    } catch (error) {
-      console.error('Database connection error:', error);
-      return NextResponse.json(
-        { error: 'Unable to connect to database' },
-        { status: 503 }
-      );
-    }
+    await connectToDatabase();
+    console.log('Successfully connected to database');
 
     try {
       console.log('Fetching public courses...');
@@ -27,7 +19,7 @@ export async function GET() {
       console.log(`Found ${courses.length} public courses`);
       
       // Always return an array, even if empty
-      return NextResponse.json({ courses: courses || [] });
+      return NextResponse.json({ data: courses || [] });
     } catch (error) {
       console.error('Error fetching public courses:', error);
       console.error('Error details:', JSON.stringify({
@@ -36,10 +28,8 @@ export async function GET() {
         name: error.name,
         code: error.code
       }));
-      return NextResponse.json(
-        { error: 'Failed to fetch public courses' },
-        { status: 500 }
-      );
+      // Return empty array in case of error
+      return NextResponse.json({ data: [] });
     }
   } catch (error: any) {
     console.error('Get public courses error:', {

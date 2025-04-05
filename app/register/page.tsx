@@ -32,8 +32,10 @@ export default function Register() {
       try {
         // Using custom axios instance that handles basePath
         const response = await axios.get('/api/courses/public');
-        setCourses(response.data.data);
+        setCourses(response.data.data || []);
       } catch (error) {
+        console.error('Error fetching courses:', error);
+        setCourses([]);
         setError('Failed to load available courses. Please try again later.');
       }
     };
