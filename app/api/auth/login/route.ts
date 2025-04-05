@@ -19,6 +19,7 @@ export async function POST(request: Request) {
     let body;
     try {
       body = await request.json();
+      console.log('Received login request body:', { email: body.email, hasPassword: !!body.password });
     } catch (error) {
       console.error('Failed to parse request body:', error);
       return NextResponse.json(
@@ -28,8 +29,6 @@ export async function POST(request: Request) {
     }
 
     const { email, password } = body;
-    
-    console.log('Login request received for:', email);
     
     // Validate input
     if (!email || !password) {
@@ -42,9 +41,10 @@ export async function POST(request: Request) {
     
     // Connect to database with timeout
     try {
+      console.log('Attempting to connect to database...');
       const dbPromise = connectToDatabase();
       await Promise.race([dbPromise, timeoutPromise]);
-      console.log('Connected to database');
+      console.log('Successfully connected to database');
     } catch (error) {
       console.error('Database connection error:', error);
       return NextResponse.json(
@@ -56,7 +56,9 @@ export async function POST(request: Request) {
     // Find user with password included
     let user;
     try {
+      console.log('Searching for user with email:', email);
       user = await User.findOne({ email }).select('+password');
+      console.log('User search result:', user ? 'User found' : 'User not found');
     } catch (error) {
       console.error('Database query error:', error);
       return NextResponse.json(
@@ -73,7 +75,7 @@ export async function POST(request: Request) {
       );
     }
     
-    console.log('User found:', user._id);
+    console.log('User found:', { id: user._id, email: user.email, role: user.role });
     
     // Check if user is blocked
     if (user.isBlocked) {
@@ -87,7 +89,9 @@ export async function POST(request: Request) {
     // Verify password
     let isPasswordValid;
     try {
+      console.log('Verifying password...');
       isPasswordValid = await bcrypt.compare(password, user.password);
+      console.log('Password verification result:', isPasswordValid ? 'Valid' : 'Invalid');
     } catch (error) {
       console.error('Password comparison error:', error);
       return NextResponse.json(
@@ -104,12 +108,11 @@ export async function POST(request: Request) {
       );
     }
     
-    console.log('Password verified for user:', user._id);
-    
     // Update last activity
     try {
       user.lastActivityAt = new Date();
       await user.save();
+      console.log('Updated user last activity timestamp');
     } catch (error) {
       console.error('Failed to update user last activity:', error);
       // Continue with login even if this fails
@@ -118,6 +121,7 @@ export async function POST(request: Request) {
     // Generate JWT token
     let token;
     try {
+      console.log('Generating JWT token...');
       token = jwt.sign(
         {
           userId: user._id,
@@ -128,6 +132,7 @@ export async function POST(request: Request) {
         process.env.JWT_SECRET || 'default_jwt_secret',
         { expiresIn: '7d' }
       );
+      console.log('JWT token generated successfully');
     } catch (error) {
       console.error('JWT token generation error:', error);
       return NextResponse.json(
@@ -135,8 +140,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-    
-    console.log('JWT token generated for user:', user._id);
     
     // Return user info without password
     const userResponse = {
@@ -146,7 +149,7 @@ export async function POST(request: Request) {
       role: user.role
     };
     
-    console.log('Login successful for user:', user._id, 'with role:', user.role);
+    console.log('Login successful for user:', { id: user._id, role: user.role });
     
     return NextResponse.json({
       user: userResponse,

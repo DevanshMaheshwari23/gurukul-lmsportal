@@ -10,18 +10,27 @@ let connectionAttempts = 0;
 const MAX_CONNECTION_ATTEMPTS = 3;
 
 export async function connectToDatabase() {
+  console.log('connectToDatabase called, current state:', {
+    isConnected,
+    hasConnectionPromise: !!connectionPromise,
+    connectionAttempts
+  });
+
   // If already connected, return
   if (isConnected) {
+    console.log('Already connected to MongoDB');
     return;
   }
 
   // If there's an ongoing connection attempt, return that promise
   if (connectionPromise) {
+    console.log('Returning existing connection promise');
     return connectionPromise;
   }
 
   // Reset connection attempts if we've exceeded the max
   if (connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
+    console.log('Resetting connection attempts after max attempts reached');
     connectionAttempts = 0;
     isConnected = false;
     connectionPromise = null;
@@ -33,6 +42,8 @@ export async function connectToDatabase() {
   // Create a new connection promise
   connectionPromise = (async () => {
     try {
+      console.log('Attempting MongoDB connection with URI:', MONGODB_URI.replace(/\/\/[^@]*@/, '//****:****@'));
+
       // Set connection options for better performance and reliability
       const options = {
         serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
@@ -48,6 +59,7 @@ export async function connectToDatabase() {
 
       // Connect to MongoDB
       await mongoose.connect(MONGODB_URI, options);
+      console.log('MongoDB connection established');
 
       // Set up event listeners for connection monitoring
       mongoose.connection.on('error', (err) => {
@@ -71,7 +83,7 @@ export async function connectToDatabase() {
       isConnected = true;
       connectionAttempts = 0;
 
-      console.log('Connected to MongoDB');
+      console.log('MongoDB connection setup complete');
     } catch (error: any) {
       connectionAttempts++;
       console.error('MongoDB connection error:', {
@@ -79,14 +91,17 @@ export async function connectToDatabase() {
         stack: error?.stack,
         name: error?.name || 'Error',
         code: error?.code,
-        attempt: connectionAttempts
+        attempt: connectionAttempts,
+        uri: MONGODB_URI.replace(/\/\/[^@]*@/, '//****:****@')
       });
       
       isConnected = false;
       connectionPromise = null;
       
       if (connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
-        throw new Error(`Failed to connect to MongoDB after ${MAX_CONNECTION_ATTEMPTS} attempts`);
+        const errorMessage = `Failed to connect to MongoDB after ${MAX_CONNECTION_ATTEMPTS} attempts`;
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
       
       throw error;
