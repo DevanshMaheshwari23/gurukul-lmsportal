@@ -4,7 +4,16 @@ import { User } from '@/lib/models/user';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+// Set timeout for the entire function
+const TIMEOUT_MS = 8000; // 8 seconds timeout
+
 export async function POST(request: Request) {
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('Request timed out'));
+    }, TIMEOUT_MS);
+  });
+
   try {
     const body = await request.json();
     const { email, password } = body;
@@ -20,8 +29,9 @@ export async function POST(request: Request) {
       );
     }
     
-    // Connect to database
-    await connectToDatabase();
+    // Connect to database with timeout
+    const dbPromise = connectToDatabase();
+    await Promise.race([dbPromise, timeoutPromise]);
     console.log('Connected to database');
     
     // Find user with password included
@@ -92,7 +102,20 @@ export async function POST(request: Request) {
       token
     });
   } catch (error: any) {
-    console.error('Login error details:', error.message, error.stack);
+    console.error('Login error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      code: error.code
+    });
+    
+    if (error.message === 'Request timed out') {
+      return NextResponse.json(
+        { error: 'Login request timed out. Please try again.' },
+        { status: 504 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Login failed. Please try again.' },
       { status: 500 }
