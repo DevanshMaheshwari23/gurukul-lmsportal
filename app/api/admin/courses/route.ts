@@ -32,30 +32,73 @@ async function verifyAdminToken(authHeader: string | null) {
 // GET all courses (admin only)
 export async function GET(request: Request) {
   try {
+    console.log('Admin courses API called');
+    
     // Verify admin authorization
     const authHeader = request.headers.get('Authorization');
+    console.log('Authorization header present:', !!authHeader);
+    
     const verificationResult = await verifyAdminToken(authHeader);
     
     if ('error' in verificationResult) {
+      console.log('Token verification failed:', verificationResult.error);
       return NextResponse.json(
         { error: verificationResult.error },
         { status: verificationResult.status }
       );
     }
     
+    console.log('Admin authentication successful');
+    
     // Connect to database
-    await connectToDatabase();
+    try {
+      await connectToDatabase();
+      console.log('Successfully connected to database');
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      return NextResponse.json(
+        { error: 'Unable to connect to database' },
+        { status: 503 }
+      );
+    }
     
     // Get all courses
-    const courses = await Course.find()
-      .sort({ createdAt: -1 })
-      .populate('createdBy', 'name email');
-    
-    return NextResponse.json({ courses });
+    try {
+      console.log('Fetching all courses');
+      // First try without populate to see if that's the issue
+      const courses = await Course.find()
+        .sort({ createdAt: -1 })
+        .lean(); // Use lean for better performance
+      
+      console.log(`Found ${courses.length} courses`);
+      
+      // Map courses to remove any invalid references that might cause issues
+      const sanitizedCourses = courses.map(course => {
+        // Create a clean copy without the createdBy if it's invalid
+        const sanitized = { ...course };
+        if (sanitized.createdBy && typeof sanitized.createdBy !== 'string' && !sanitized.createdBy._id) {
+          delete sanitized.createdBy;
+        }
+        return sanitized;
+      });
+      
+      return NextResponse.json({ courses: sanitizedCourses || [] });
+    } catch (fetchError) {
+      console.error('Error fetching courses:', fetchError);
+      return NextResponse.json(
+        { error: 'Failed to fetch courses' },
+        { status: 500 }
+      );
+    }
   } catch (error: any) {
-    console.error('Admin courses error:', error);
+    console.error('Admin courses error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      code: error.code
+    });
     return NextResponse.json(
-      { error: 'Failed to fetch courses' },
+      { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }
