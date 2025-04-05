@@ -247,8 +247,8 @@ export default function Courses() {
                   </p>
                   <div className="mt-4 flex justify-between items-center">
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {course.sections.length}{' '}
-                      {course.sections.length === 1 ? 'section' : 'sections'} •{' '}
+                      {(course.sections?.length || 0)}{' '}
+                      {(course.sections?.length || 0) === 1 ? 'section' : 'sections'} •{' '}
                       {formatDate(course.createdAt)}
                     </div>
                     <div className="flex space-x-2">
@@ -340,7 +340,7 @@ export default function Courses() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 dark:text-white">
-                        {course.sections.length}
+                        {course.sections?.length || 0}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
