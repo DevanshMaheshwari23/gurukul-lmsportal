@@ -1,34 +1,5 @@
 {
-  "version": 2,
   "buildCommand": "cd gurukul && npm install && npm run build",
   "outputDirectory": "gurukul/.next",
-  "framework": "nextjs",
-  "functions": {
-    "api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/(.+)",
-      "dest": "/api/$1",
-      "continue": true
-    },
-    {
-      "src": "/gurukul/api/(.+)",
-      "dest": "/api/$1",
-      "continue": true
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/.*",
-      "dest": "/gurukul/index"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
-} 
+  "installCommand": "cd gurukul && npm install"
+}
