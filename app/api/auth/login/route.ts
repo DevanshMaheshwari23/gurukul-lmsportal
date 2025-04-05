@@ -15,7 +15,18 @@ export async function POST(request: Request) {
   });
 
   try {
-    const body = await request.json();
+    // Parse request body with error handling
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      console.error('Failed to parse request body:', error);
+      return NextResponse.json(
+        { error: 'Invalid request body' },
+        { status: 400 }
+      );
+    }
+
     const { email, password } = body;
     
     console.log('Login request received for:', email);
@@ -30,12 +41,29 @@ export async function POST(request: Request) {
     }
     
     // Connect to database with timeout
-    const dbPromise = connectToDatabase();
-    await Promise.race([dbPromise, timeoutPromise]);
-    console.log('Connected to database');
+    try {
+      const dbPromise = connectToDatabase();
+      await Promise.race([dbPromise, timeoutPromise]);
+      console.log('Connected to database');
+    } catch (error) {
+      console.error('Database connection error:', error);
+      return NextResponse.json(
+        { error: 'Unable to connect to database. Please try again later.' },
+        { status: 503 }
+      );
+    }
     
     // Find user with password included
-    const user = await User.findOne({ email }).select('+password');
+    let user;
+    try {
+      user = await User.findOne({ email }).select('+password');
+    } catch (error) {
+      console.error('Database query error:', error);
+      return NextResponse.json(
+        { error: 'An error occurred while processing your request' },
+        { status: 500 }
+      );
+    }
     
     if (!user) {
       console.log('Login failed: User not found for email:', email);
@@ -57,7 +85,16 @@ export async function POST(request: Request) {
     }
     
     // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    let isPasswordValid;
+    try {
+      isPasswordValid = await bcrypt.compare(password, user.password);
+    } catch (error) {
+      console.error('Password comparison error:', error);
+      return NextResponse.json(
+        { error: 'An error occurred while verifying your password' },
+        { status: 500 }
+      );
+    }
     
     if (!isPasswordValid) {
       console.log('Login failed: Invalid password for user:', user._id);
@@ -70,20 +107,34 @@ export async function POST(request: Request) {
     console.log('Password verified for user:', user._id);
     
     // Update last activity
-    user.lastActivityAt = new Date();
-    await user.save();
+    try {
+      user.lastActivityAt = new Date();
+      await user.save();
+    } catch (error) {
+      console.error('Failed to update user last activity:', error);
+      // Continue with login even if this fails
+    }
     
     // Generate JWT token
-    const token = jwt.sign(
-      {
-        userId: user._id,
-        email: user.email,
-        role: user.role,
-        name: user.name
-      },
-      process.env.JWT_SECRET || 'default_jwt_secret',
-      { expiresIn: '7d' }
-    );
+    let token;
+    try {
+      token = jwt.sign(
+        {
+          userId: user._id,
+          email: user.email,
+          role: user.role,
+          name: user.name
+        },
+        process.env.JWT_SECRET || 'default_jwt_secret',
+        { expiresIn: '7d' }
+      );
+    } catch (error) {
+      console.error('JWT token generation error:', error);
+      return NextResponse.json(
+        { error: 'An error occurred while generating your session' },
+        { status: 500 }
+      );
+    }
     
     console.log('JWT token generated for user:', user._id);
     
@@ -106,7 +157,9 @@ export async function POST(request: Request) {
       message: error.message,
       stack: error.stack,
       name: error.name,
-      code: error.code
+      code: error.code,
+      type: error.type,
+      cause: error.cause
     });
     
     if (error.message === 'Request timed out') {
@@ -117,7 +170,7 @@ export async function POST(request: Request) {
     }
     
     return NextResponse.json(
-      { error: 'Login failed. Please try again.' },
+      { error: 'An unexpected error occurred. Please try again.' },
       { status: 500 }
     );
   }
