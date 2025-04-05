@@ -88,11 +88,28 @@ export async function GET(request: Request) {
     try {
       console.log('Fetching all courses for admin...');
       const courses = await Course.find({})
-        .select('_id title description instructor duration level image enrolledCount isPublic createdAt')
+        .select('_id title description instructor duration level image enrolledCount isPublic createdAt sections thumbnailUrl')
+        .populate('createdBy', 'name email')
         .sort({ createdAt: -1 });
       
       console.log(`Found ${courses.length} courses`);
-      return NextResponse.json({ courses });
+      
+      // Transform the courses to match the frontend's expected format
+      const transformedCourses = courses.map(course => ({
+        _id: course._id,
+        title: course.title,
+        description: course.description,
+        thumbnailUrl: course.image || course.thumbnailUrl,
+        sections: course.sections || [],
+        createdAt: course.createdAt,
+        createdBy: course.createdBy || {
+          _id: decodedToken.userId,
+          name: 'Admin',
+          email: decodedToken.email
+        }
+      }));
+      
+      return NextResponse.json({ courses: transformedCourses });
     } catch (error) {
       console.error('Error fetching courses:', error);
       console.error('Error details:', JSON.stringify({
