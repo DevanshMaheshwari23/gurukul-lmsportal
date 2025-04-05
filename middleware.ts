@@ -8,9 +8,10 @@ export function middleware(request: NextRequest) {
   // Get token from cookies
   const token = request.cookies.get('token')?.value;
   
-  // Function to create URL with correct basePath
+  // Function to create URL with basePath prefix
   const createUrl = (pathname: string): URL => {
-    const url = new URL(pathname, request.url);
+    const basePath = process.env.NODE_ENV === 'production' ? '/gurukul' : '';
+    const url = new URL(`${basePath}${pathname}`, request.url);
     return url;
   };
   
@@ -39,11 +40,7 @@ export function middleware(request: NextRequest) {
   // Protect API routes
   if (path.startsWith('/api/')) {
     // Some API routes don't require authentication (e.g., login, register)
-    const publicRoutes = [
-      '/api/auth/login', 
-      '/api/auth/register', 
-      '/api/courses/public'
-    ];
+    const publicRoutes = ['/api/auth/login', '/api/auth/register', '/api/courses/public'];
     
     // If the route is not public and there's no token, return 401
     if (!publicRoutes.some(route => path.startsWith(route)) && !token) {
@@ -57,11 +54,12 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Add debugging information
 export const config = {
   // Specify which paths this middleware will run on
   matcher: [
-    '/((?!_next/static|_next/image|_next/data|favicon.ico|public|.*\\.(.*)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
     '/api/:path*',
+    '/(admin)/:path*',
+    '/(student)/:path*',
   ],
 }; 

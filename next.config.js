@@ -7,16 +7,22 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Remove basePath as Vercel handles the routing
-  basePath: '',
-  assetPrefix: '',
-  // Configure image optimization
-  images: {
-    domains: ['localhost', 'vercel.app'],
-    unoptimized: false,
+  // Use basePath in all environments for consistency
+  basePath: '/gurukul',
+  assetPrefix: '/gurukul',
+  // Customize API routes to make sure they work with the basePath
+  async rewrites() {
+    return [
+      {
+        source: '/gurukul/api/:path*',
+        destination: '/api/:path*',
+      }
+    ];
   },
-  // Add proper transpilation for certain Node.js packages
-  transpilePackages: ['bcrypt', 'bcryptjs']
+  // Turn off image optimization
+  images: {
+    unoptimized: true,
+  },
 };
 
 module.exports = nextConfig; 
